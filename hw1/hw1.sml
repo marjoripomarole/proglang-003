@@ -39,3 +39,51 @@ fun dates_in_month(dates:(int * int * int) list, month:int) =
   in
     listmaker([], dates)
   end
+
+fun dates_in_months(dates:(int * int * int) list, months:int list) =
+  let fun listmaker(return:(int * int * int) list, ms:int list) =
+    if null ms
+    then return
+    else listmaker(return @ dates_in_month(dates, hd ms), tl ms)
+  in
+    listmaker([], months)
+  end
+
+fun get_nth(strings:string list, n:int) =
+  let fun count(acc: int, ss: string list) = 
+    if null ss
+    then ""
+    else if acc = n
+    then hd ss
+    else count(acc + 1, tl ss)
+  in
+    count(1, strings)
+  end
+
+val months = ["January", "February", "March", "April", "May", "June", "July",
+"August", "September", "October", "November", "December"]
+
+fun date_to_string(date:(int * int * int)) =
+  get_nth(months, #2 date) ^ " " ^ Int.toString(#3 date) ^ ", " ^
+  Int.toString(#1 date)
+
+fun number_before_reaching_sum(max_sum: int, numbers: int list) = 
+  let fun sum(list_sum:int, count:int, ns: int list) =
+    if null ns
+    then 0
+    else if list_sum + (hd ns) >= max_sum
+    then count - 1
+    else sum(list_sum + (hd ns), count + 1, tl ns)
+  in
+    sum(0, 1, numbers)
+  end
+
+fun what_month(day:int) =
+  let 
+   val days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  in
+    number_before_reaching_sum(day, days_in_month) + 1
+  end
+
+fun month_range(day1:int, day2:int) =
+
