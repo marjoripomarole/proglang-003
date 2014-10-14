@@ -1,13 +1,16 @@
 (* Author: Marjori Pomarole *)
 
 fun is_older(date1:(int*int*int), date2:(int*int*int)) =
-  if #1 date1 < #1 date2 (* year *)
-  then true
-  else if #2 date1 < #2 date2 (* month *)
-  then true
-  else if #3 date1 < #3 date2 (* day *)
-  then true
-  else false
+  if #1 date1 = #1 date2 andalso #2 date2 = #2 date1 andalso #3 date1 = #3 date2
+  then false
+  else if #1 date1 > #1 date2 (* year *)
+  then false
+  else if #1 date1 = #1 date2 andalso #2 date1 > #2 date2
+  then false
+  else if #1 date1 = #1 date2 andalso #2 date1 > #2 date2 andalso #3 date1 > #3 date2
+  then false
+  else true
+
 
 fun number_in_month(dates:(int * int * int) list, month:int) =
   let fun count(acc:int, ds:(int * int * int) list) =
@@ -86,4 +89,25 @@ fun what_month(day:int) =
   end
 
 fun month_range(day1:int, day2:int) =
+  let fun countdown(result: int list, current: int) =
+    if current = day1
+    then what_month(current) :: result
+    else countdown(what_month(current)::result, current - 1)
+  in
+    countdown([], day2)
+  end
 
+fun oldest(dates:(int*int*int) list)=
+  if null dates
+  then NONE
+  else
+    let val rest = oldest(tl dates)
+    in
+      if isSome rest
+      then
+        if is_older(valOf rest, (hd dates))
+        then rest
+        else SOME(hd dates)
+      else SOME(hd dates)
+    end
+  
